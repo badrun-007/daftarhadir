@@ -1,0 +1,875 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8">
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    >
+
+    <title>
+      Daftar Hadir MusyCab PC PERSIS Pangalengan
+    </title>
+
+    <script
+      src="https://unpkg.com/html5-qrcode"
+      type="text/javascript"
+    ></script>
+
+    <style>
+      :root {
+        --bg: #f1f5f9;
+        --card: #ffffff;
+        --border: #dbe3ee;
+        --text: #172033;
+        --muted: #64748b;
+        --primary: #1769e0;
+        --danger: #dc3545;
+        --success: #198754;
+        --warning-bg: #fff7ed;
+        --warning-text: #9a3412;
+        --success-bg: #ecfdf3;
+        --success-text: #166534;
+        --error-bg: #fff1f2;
+        --error-text: #9f1239;
+        --radius: 16px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        color: var(--text);
+        font-family:
+          Inter,
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+        background:
+          radial-gradient(
+            circle at top,
+            #e0ecff 0,
+            var(--bg) 48%
+          );
+      }
+
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+
+      .container {
+        width: min(100% - 28px, 920px);
+        margin: 24px auto 40px;
+      }
+
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow:
+          0 12px 30px rgba(15, 23, 42, 0.07);
+      }
+
+      .header {
+        padding: 28px 20px 24px;
+        text-align: center;
+      }
+
+      .logo {
+        display: block;
+        width: 110px;
+        height: 110px;
+        margin: 0 auto 14px;
+        object-fit: contain;
+      }
+
+      .logo-fallback {
+        display: none;
+        width: 110px;
+        height: 110px;
+        margin: 0 auto 14px;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary);
+        border: 2px solid var(--primary);
+        border-radius: 50%;
+        font-size: 13px;
+        font-weight: 800;
+        line-height: 1.2;
+        text-align: center;
+      }
+
+      .title {
+        margin: 0;
+        font-size: clamp(1.25rem, 3vw, 1.65rem);
+        line-height: 1.3;
+      }
+
+      .subtitle {
+        margin: 8px 0 0;
+        color: var(--muted);
+        font-size: 0.98rem;
+      }
+
+      .content-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 16px;
+        margin-top: 16px;
+      }
+
+      .panel {
+        padding: 20px;
+      }
+
+      .panel-title {
+        margin: 0 0 16px;
+        font-size: 1.1rem;
+      }
+
+      .field {
+        margin-top: 14px;
+      }
+
+      .field:first-of-type {
+        margin-top: 0;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 7px;
+        color: #334155;
+        font-size: 0.9rem;
+        font-weight: 700;
+      }
+
+      input,
+      select {
+        width: 100%;
+        min-height: 46px;
+        padding: 11px 13px;
+        color: var(--text);
+        background: #fff;
+        border: 1px solid #cbd5e1;
+        border-radius: 11px;
+        outline: none;
+      }
+
+      input:focus,
+      select:focus {
+        border-color: var(--primary);
+        box-shadow:
+          0 0 0 4px rgba(23, 105, 224, 0.13);
+      }
+
+      input[readonly] {
+        color: #475569;
+        background: #f8fafc;
+      }
+
+      #reader {
+        width: 100%;
+        min-height: 220px;
+        margin-top: 14px;
+        padding: 8px;
+        overflow: hidden;
+        background: #f8fafc;
+        border: 1px dashed #b8c5d6;
+        border-radius: 13px;
+      }
+
+      .button-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: 14px;
+      }
+
+      .button {
+        min-height: 46px;
+        padding: 10px 14px;
+        color: #fff;
+        border: 0;
+        border-radius: 11px;
+        cursor: pointer;
+        font-weight: 800;
+      }
+
+      .button:hover {
+        filter: brightness(0.94);
+      }
+
+      .button:disabled {
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
+
+      .button-primary {
+        background: var(--primary);
+      }
+
+      .button-danger {
+        background: var(--danger);
+      }
+
+      .button-success {
+        width: 100%;
+        margin-top: 18px;
+        background: var(--success);
+      }
+
+      .status {
+        display: none;
+        margin-top: 16px;
+        padding: 12px 14px;
+        border-radius: 11px;
+        font-size: 0.92rem;
+        line-height: 1.45;
+      }
+
+      .status.success {
+        display: block;
+        color: var(--success-text);
+        background: var(--success-bg);
+        border: 1px solid #bbf7d0;
+      }
+
+      .status.error {
+        display: block;
+        color: var(--error-text);
+        background: var(--error-bg);
+        border: 1px solid #fecdd3;
+      }
+
+      .status.info {
+        display: block;
+        color: var(--warning-text);
+        background: var(--warning-bg);
+        border: 1px solid #fed7aa;
+      }
+
+      .help {
+        margin: 12px 0 0;
+        color: var(--muted);
+        font-size: 0.82rem;
+        line-height: 1.5;
+      }
+
+      .footer {
+        margin-top: 14px;
+        color: var(--muted);
+        font-size: 0.82rem;
+        text-align: center;
+      }
+
+      @media (min-width: 760px) {
+        .content-grid {
+          grid-template-columns:
+            minmax(0, 1fr)
+            minmax(0, 1fr);
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <main class="container">
+      <section class="card header">
+        <img
+          class="logo"
+          src="assets/logo.png"
+          alt="Logo PC PERSIS Pangalengan"
+          onerror="showLogoFallback()"
+        >
+
+        <div id="logoFallback" class="logo-fallback">
+          PC PERSIS<br>
+          PANGALENGAN
+        </div>
+
+        <h1 class="title">
+          Daftar Hadir QR
+        </h1>
+
+        <p class="subtitle">
+          MusyCab PC PERSIS Pangalengan
+        </p>
+      </section>
+
+      <section class="content-grid">
+        <div class="card panel">
+          <h2 class="panel-title">
+            Scanner QR
+          </h2>
+
+          <div class="field">
+            <label for="cameraSelect">
+              Pilih Kamera
+            </label>
+
+            <select id="cameraSelect">
+              <option value="">
+                Klik Start Scan untuk mencari kamera
+              </option>
+            </select>
+          </div>
+
+          <div id="reader"></div>
+
+          <div class="button-grid">
+            <button
+              id="startButton"
+              class="button button-primary"
+              type="button"
+              onclick="startScan()"
+            >
+              Start Scan
+            </button>
+
+            <button
+              id="stopButton"
+              class="button button-danger"
+              type="button"
+              onclick="stopScan()"
+              disabled
+            >
+              Stop Scan
+            </button>
+          </div>
+
+          <p class="help">
+            Klik Start Scan untuk meminta izin kamera.
+            Kamera laptop dan HP dapat dipilih dari daftar.
+          </p>
+        </div>
+
+        <div class="card panel">
+          <h2 class="panel-title">
+            Data Kehadiran
+          </h2>
+
+          <div class="field">
+            <label for="petugas">
+              Nama Petugas
+            </label>
+
+            <input
+              id="petugas"
+              type="text"
+              placeholder="Masukkan nama petugas"
+            >
+          </div>
+
+          <div class="field">
+            <label for="guest_id">
+              Guest ID
+            </label>
+
+            <input
+              id="guest_id"
+              type="text"
+              placeholder="Terisi otomatis dari QR"
+              readonly
+            >
+          </div>
+
+          <div class="field">
+            <label for="nama">
+              Nama
+            </label>
+
+            <input
+              id="nama"
+              type="text"
+              placeholder="Nama peserta"
+              readonly
+            >
+          </div>
+
+          <div class="field">
+            <label for="niat">
+              NIAT
+            </label>
+
+            <input
+              id="niat"
+              type="text"
+              placeholder="NIAT peserta"
+              readonly
+            >
+          </div>
+
+          <div class="field">
+            <label for="utusan">
+              Utusan
+            </label>
+
+            <input
+              id="utusan"
+              type="text"
+              placeholder="Utusan peserta"
+              readonly
+            >
+          </div>
+
+          <button
+            class="button button-success"
+            type="button"
+            onclick="submitManual()"
+          >
+            Simpan Manual
+          </button>
+
+          <div id="status" class="status"></div>
+        </div>
+      </section>
+
+      <p class="footer">
+        Pastikan halaman dibuka melalui HTTPS.
+      </p>
+    </main>
+
+    <script>
+      /*
+       * GANTI URL DI BAWAH DENGAN URL WEB APP APPS SCRIPT.
+       */
+      const API_URL =
+        'https://script.google.com/macros/s/AKfycbxQw-EQ0yEj0-k8P1TnIA0HkfYHQ4qyIAcaUuzdkd2NyTpe1iK7fibpv5UDfyPAD1bVZg/exec';
+
+      let scanner = null;
+      let cameras = [];
+      let scanning = false;
+      let submitting = false;
+      let lastGuestId = '';
+      let lastScanTime = 0;
+
+      const SCAN_COOLDOWN_MS = 3000;
+
+      function getElement(id) {
+        return document.getElementById(id);
+      }
+
+      function setStatus(message, type) {
+        const element = getElement('status');
+
+        element.textContent = message;
+        element.className = 'status ' + (type || 'success');
+      }
+
+      function showLogoFallback() {
+        const image = document.querySelector('.logo');
+        const fallback = getElement('logoFallback');
+
+        if (image) {
+          image.style.display = 'none';
+        }
+
+        if (fallback) {
+          fallback.style.display = 'flex';
+        }
+      }
+
+      async function apiRequest(url, options) {
+        const response = await fetch(url, options || {});
+
+        if (!response.ok) {
+          throw new Error(
+            `Server error: ${response.status}`
+          );
+        }
+
+        return response.json();
+      }
+
+      function isMobileDevice() {
+        return /Android|iPhone|iPad|iPod/i.test(
+          navigator.userAgent
+        );
+      }
+
+      function chooseDefaultCamera(cameraList) {
+        if (!cameraList.length) {
+          return '';
+        }
+
+        const normalized = cameraList.map(camera => ({
+          ...camera,
+          labelLower: String(camera.label || '')
+            .toLowerCase()
+        }));
+
+        if (isMobileDevice()) {
+          const backCamera = normalized.find(camera =>
+            camera.labelLower.includes('back') ||
+            camera.labelLower.includes('rear') ||
+            camera.labelLower.includes('environment') ||
+            camera.labelLower.includes('belakang')
+          );
+
+          return backCamera
+            ? backCamera.id
+            : normalized[normalized.length - 1].id;
+        }
+
+        const externalCamera = normalized.find(camera =>
+          camera.labelLower.includes('usb') ||
+          camera.labelLower.includes('external') ||
+          camera.labelLower.includes('logitech')
+        );
+
+        const laptopCamera = normalized.find(camera =>
+          camera.labelLower.includes('integrated') ||
+          camera.labelLower.includes('built-in') ||
+          camera.labelLower.includes('internal') ||
+          camera.labelLower.includes('facetime')
+        );
+
+        return (
+          externalCamera ||
+          laptopCamera ||
+          normalized[0]
+        ).id;
+      }
+
+      async function requestCameraPermission() {
+        if (!window.isSecureContext) {
+          throw new Error(
+            'Halaman bukan HTTPS. Kamera membutuhkan HTTPS.'
+          );
+        }
+
+        if (
+          !navigator.mediaDevices ||
+          !navigator.mediaDevices.getUserMedia
+        ) {
+          throw new Error(
+            'Browser tidak mendukung akses kamera.'
+          );
+        }
+
+        const stream =
+          await navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: false
+          });
+
+        stream.getTracks().forEach(track => {
+          track.stop();
+        });
+      }
+
+      async function loadCameras() {
+        cameras = await Html5Qrcode.getCameras();
+
+        const select = getElement('cameraSelect');
+        select.innerHTML = '';
+
+        if (!cameras.length) {
+          throw new Error(
+            'Browser tidak menemukan kamera.'
+          );
+        }
+
+        cameras.forEach((camera, index) => {
+          const option = document.createElement('option');
+
+          option.value = camera.id;
+          option.textContent =
+            camera.label || `Kamera ${index + 1}`;
+
+          select.appendChild(option);
+        });
+
+        const defaultCamera =
+          chooseDefaultCamera(cameras);
+
+        if (defaultCamera) {
+          select.value = defaultCamera;
+        }
+      }
+
+      async function startScan() {
+        if (scanning) {
+          return;
+        }
+
+        const startButton = getElement('startButton');
+        const stopButton = getElement('stopButton');
+
+        try {
+          startButton.disabled = true;
+
+          setStatus(
+            'Meminta izin kamera...',
+            'info'
+          );
+
+          await requestCameraPermission();
+          await loadCameras();
+
+          const selectedCamera =
+            getElement('cameraSelect').value;
+
+          if (!selectedCamera) {
+            throw new Error(
+              'Silakan pilih kamera terlebih dahulu.'
+            );
+          }
+
+          if (!scanner) {
+            scanner = new Html5Qrcode('reader');
+          }
+
+          await scanner.start(
+            selectedCamera,
+            {
+              fps: 10,
+              qrbox: {
+                width: 260,
+                height: 260
+              }
+            },
+            onScanSuccess,
+            onScanFailure
+          );
+
+          scanning = true;
+          stopButton.disabled = false;
+
+          setStatus(
+            'Scanner aktif. Arahkan QR ke kamera.',
+            'success'
+          );
+        } catch (error) {
+          startButton.disabled = false;
+          stopButton.disabled = true;
+
+          setStatus(
+            `${error.name || 'CameraError'}: ${
+              error.message || error
+            }`,
+            'error'
+          );
+        }
+      }
+
+      async function stopScan() {
+        try {
+          if (scanner && scanning) {
+            await scanner.stop();
+            await scanner.clear();
+          }
+
+          scanner = null;
+          scanning = false;
+
+          getElement('startButton').disabled = false;
+          getElement('stopButton').disabled = true;
+
+          setStatus(
+            'Scanner dihentikan.',
+            'info'
+          );
+        } catch (error) {
+          setStatus(
+            `Gagal menghentikan kamera: ${
+              error.message || error
+            }`,
+            'error'
+          );
+        }
+      }
+
+      function onScanFailure() {
+        // Error setiap frame tidak ditampilkan.
+      }
+
+      async function onScanSuccess(decodedText) {
+        const guestId = String(decodedText || '').trim();
+        const now = Date.now();
+
+        if (!guestId || submitting) {
+          return;
+        }
+
+        if (
+          guestId === lastGuestId &&
+          now - lastScanTime < SCAN_COOLDOWN_MS
+        ) {
+          return;
+        }
+
+        const petugas =
+          getElement('petugas').value.trim();
+
+        if (!petugas) {
+          setStatus(
+            'Isi Nama Petugas terlebih dahulu.',
+            'error'
+          );
+          return;
+        }
+
+        lastGuestId = guestId;
+        lastScanTime = now;
+        submitting = true;
+
+        getElement('guest_id').value = guestId;
+
+        setStatus(
+          `QR terbaca: ${guestId}. Mengambil data...`,
+          'info'
+        );
+
+        try {
+          const url =
+            `${API_URL}?api=getGuestById&guest_id=` +
+            encodeURIComponent(guestId);
+
+          const result = await apiRequest(url);
+
+          if (!result.ok) {
+            submitting = false;
+            setStatus(result.message, 'error');
+            return;
+          }
+
+          const guest = result.data;
+
+          getElement('nama').value = guest.nama || '';
+          getElement('niat').value = guest.niat || '';
+          getElement('utusan').value = guest.utusan || '';
+
+          const payload = {
+            guest_id: guest.guest_id,
+            nama: guest.nama,
+            niat: guest.niat,
+            utusan: guest.utusan,
+            petugas: petugas,
+            device: navigator.userAgent
+          };
+
+          setStatus(
+            'Data ditemukan. Menyimpan...',
+            'info'
+          );
+
+          const saveResult = await apiRequest(API_URL, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'text/plain;charset=utf-8'
+            },
+            body: JSON.stringify({
+              action: 'submitAttendance',
+              payload: payload
+            })
+          });
+
+          handleAttendanceResult(saveResult);
+        } catch (error) {
+          submitting = false;
+
+          setStatus(
+            error.message || 'Gagal terhubung ke server.',
+            'error'
+          );
+        }
+      }
+
+      function handleAttendanceResult(result) {
+        submitting = false;
+
+        if (!result || !result.ok) {
+          setStatus(
+            result?.message ||
+            'Kehadiran gagal disimpan.',
+            'error'
+          );
+          return;
+        }
+
+        if (result.status === 'accepted') {
+          setStatus(
+            `Berhasil tersimpan otomatis: ${
+              result.guest_id
+            }`,
+            'success'
+          );
+        } else {
+          setStatus(
+            `Peserta sudah tercatat sebelumnya: ${
+              result.guest_id
+            }`,
+            'info'
+          );
+        }
+      }
+
+      async function submitManual() {
+        if (submitting) {
+          return;
+        }
+
+        const payload = {
+          guest_id:
+            getElement('guest_id').value.trim(),
+          nama:
+            getElement('nama').value.trim(),
+          niat:
+            getElement('niat').value.trim(),
+          utusan:
+            getElement('utusan').value.trim(),
+          petugas:
+            getElement('petugas').value.trim(),
+          device: navigator.userAgent
+        };
+
+        submitting = true;
+
+        setStatus(
+          'Menyimpan data...',
+          'info'
+        );
+
+        try {
+          const result = await apiRequest(API_URL, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'text/plain;charset=utf-8'
+            },
+            body: JSON.stringify({
+              action: 'submitAttendance',
+              payload: payload
+            })
+          });
+
+          handleAttendanceResult(result);
+        } catch (error) {
+          submitting = false;
+
+          setStatus(
+            error.message || 'Gagal menyimpan data.',
+            'error'
+          );
+        }
+      }
+
+      window.addEventListener(
+        'beforeunload',
+        () => {
+          if (scanner && scanning) {
+            scanner.stop();
+          }
+        }
+      );
+    </script>
+  </body>
+</html>
