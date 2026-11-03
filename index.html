@@ -357,18 +357,6 @@
           </h2>
 
           <div class="field">
-            <label for="petugas">
-              Nama Petugas
-            </label>
-
-            <input
-              id="petugas"
-              type="text"
-              placeholder="Masukkan nama petugas"
-            >
-          </div>
-
-          <div class="field">
             <label for="guest_id">
               Guest ID
             </label>
@@ -443,6 +431,10 @@
        */
       const API_URL =
         'https://script.google.com/macros/s/AKfycbxQw-EQ0yEj0-k8P1TnIA0HkfYHQ4qyIAcaUuzdkd2NyTpe1iK7fibpv5UDfyPAD1bVZg/exec';
+
+        const DEFAULT_PETUGAS = 'Panitia Musycab';
+
+
 
       let scanner = null;
       let cameras = [];
@@ -707,8 +699,7 @@
           return;
         }
 
-        const petugas =
-          getElement('petugas').value.trim();
+        const petugas = DEFAULT_PETUGAS;
 
         if (!petugas) {
           setStatus(
@@ -827,8 +818,7 @@
             getElement('niat').value.trim(),
           utusan:
             getElement('utusan').value.trim(),
-          petugas:
-            getElement('petugas').value.trim(),
+          petugas: DEFAULT_PETUGAS,
           device: navigator.userAgent
         };
 
