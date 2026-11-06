@@ -918,6 +918,9 @@ input[readonly] {
       let scanner = null;
       let cameras = [];
       let scanning = false;
+      let currentCameraId = '';
+      let cameraSwitchSequence = 0;
+      let cameraSwitchQueue = Promise.resolve();
       let submitting = false;
       let lastGuestId = '';
       let lastScanTime = 0;
@@ -1215,6 +1218,49 @@ input[readonly] {
         }
       }
 
+      async function startScannerWithCamera(cameraId) {
+        if (!cameraId) {
+          throw new Error('Silakan pilih kamera terlebih dahulu.');
+        }
+
+        if (!scanner) {
+          scanner = new Html5Qrcode('reader');
+        }
+
+        await scanner.start(
+          cameraId,
+          {
+            fps: 10,
+            qrbox: {
+              width: 260,
+              height: 260
+            }
+          },
+          onScanSuccess,
+          onScanFailure
+        );
+
+        currentCameraId = cameraId;
+        scanning = true;
+      }
+
+      async function stopActiveScanner() {
+        if (!scanner) {
+          scanning = false;
+          currentCameraId = '';
+          return;
+        }
+
+        if (scanning) {
+          await scanner.stop();
+        }
+
+        await scanner.clear();
+        scanner = null;
+        scanning = false;
+        currentCameraId = '';
+      }
+
       async function startScan() {
         if (scanning) {
           return;
@@ -1243,24 +1289,8 @@ input[readonly] {
             );
           }
 
-          if (!scanner) {
-            scanner = new Html5Qrcode('reader');
-          }
-
-          await scanner.start(
-            selectedCamera,
-            {
-              fps: 10,
-              qrbox: {
-                width: 260,
-                height: 260
-              }
-            },
-            onScanSuccess,
-            onScanFailure
-          );
-
-          scanning = true;
+          await startScannerWithCamera(selectedCamera);
+          getElement('cameraSelect').disabled = false;
           stopButton.disabled = false;
 
           setStatus(
@@ -1270,6 +1300,7 @@ input[readonly] {
         } catch (error) {
           startButton.disabled = false;
           stopButton.disabled = true;
+          getElement('cameraSelect').disabled = false;
 
           setStatus(
             `${error.name || 'CameraError'}: ${
@@ -1281,17 +1312,15 @@ input[readonly] {
       }
 
       async function stopScan() {
-        try {
-          if (scanner && scanning) {
-            await scanner.stop();
-            await scanner.clear();
-          }
+        cameraSwitchSequence++;
+        cameraSwitchQueue = Promise.resolve();
 
-          scanner = null;
-          scanning = false;
+        try {
+          await stopActiveScanner();
 
           getElement('startButton').disabled = false;
           getElement('stopButton').disabled = true;
+          getElement('cameraSelect').disabled = false;
 
           setStatus(
             'Scanner dihentikan.',
@@ -1305,6 +1334,86 @@ input[readonly] {
             'error'
           );
         }
+      }
+
+      function handleCameraChange(event) {
+        if (!scanning) {
+          return;
+        }
+
+        const nextCameraId = event.target.value;
+        const previousCameraId = currentCameraId;
+        const sequence = ++cameraSwitchSequence;
+        const select = getElement('cameraSelect');
+        const startButton = getElement('startButton');
+        const stopButton = getElement('stopButton');
+
+        cameraSwitchQueue = cameraSwitchQueue
+          .catch(() => {})
+          .then(async () => {
+            if (!scanning || sequence !== cameraSwitchSequence) {
+              return;
+            }
+
+            select.disabled = true;
+            startButton.disabled = true;
+            stopButton.disabled = true;
+            setStatus('Mengganti kamera...', 'info');
+
+            try {
+              await stopActiveScanner();
+
+              if (sequence !== cameraSwitchSequence) {
+                return;
+              }
+
+              await startScannerWithCamera(nextCameraId);
+
+              if (sequence !== cameraSwitchSequence) {
+                await stopActiveScanner();
+                return;
+              }
+
+              select.value = nextCameraId;
+              stopButton.disabled = false;
+              setStatus('Kamera berhasil diganti.', 'success');
+            } catch (error) {
+              if (sequence !== cameraSwitchSequence) {
+                return;
+              }
+
+              try {
+                await startScannerWithCamera(previousCameraId);
+                select.value = previousCameraId;
+                stopButton.disabled = false;
+              } catch (restoreError) {
+                scanner = null;
+                scanning = false;
+                currentCameraId = '';
+                select.value = previousCameraId;
+                setStatus(
+                  `Gagal mengganti kamera: ${
+                    error.message || error
+                  }`,
+                  'error'
+                );
+                return;
+              }
+
+              setStatus(
+                `Gagal mengganti kamera: ${
+                  error.message || error
+                }`,
+                'error'
+              );
+            } finally {
+              if (sequence === cameraSwitchSequence) {
+                select.disabled = false;
+                startButton.disabled = !scanning;
+                stopButton.disabled = !scanning;
+              }
+            }
+          });
       }
 
       function onScanFailure() {
@@ -1489,6 +1598,11 @@ input[readonly] {
             scanner.stop();
           }
         }
+      );
+
+      getElement('cameraSelect').addEventListener(
+        'change',
+        handleCameraChange
       );
     </script>
   </body>
