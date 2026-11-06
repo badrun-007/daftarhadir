@@ -556,11 +556,202 @@ input[readonly] {
     transition-duration: 0.001ms !important;
   }
 }
+
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.logo-pair {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin: 0 0 26px;
+}
+
+.logo {
+  display: block;
+  width: 104px;
+  height: 104px;
+  margin: 0;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.16));
+}
+
+.logo-persis {
+  padding: 8px;
+  background: #fff;
+  border: 5px solid rgba(255, 255, 255, 0.92);
+  border-radius: 50%;
+}
+
+.logo-musycab {
+  width: 210px;
+  height: 104px;
+  object-fit: contain;
+  object-position: left center;
+}
+
+.logo-divider {
+  width: 1px;
+  height: 70px;
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.logo-fallback {
+  display: none;
+  width: 104px;
+  height: 104px;
+  margin: 0 0 26px;
+  align-items: center;
+  justify-content: center;
+  color: var(--green-900);
+  background: #fff;
+  border: 5px solid rgba(255, 255, 255, 0.92);
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 900;
+  line-height: 1.2;
+  text-align: center;
+}
+
+@media (max-width: 759px) {
+  .logo-pair {
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .logo {
+    width: 72px;
+    height: 72px;
+  }
+
+  .logo-musycab {
+    width: 145px;
+    height: 72px;
+  }
+
+  .logo-divider {
+    height: 52px;
+  }
+}
+
+.toast-container {
+  position: fixed;
+  top: 22px;
+  right: 22px;
+  z-index: 10000;
+  display: flex;
+  width: min(390px, calc(100% - 32px));
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  padding: 15px 17px;
+  color: #17352b;
+  background: #fff;
+  border: 1px solid #cce5da;
+  border-left: 5px solid var(--green-700);
+  border-radius: 15px;
+  box-shadow: 0 18px 38px rgba(6, 59, 47, 0.18);
+  font-size: 0.9rem;
+  font-weight: 750;
+  line-height: 1.4;
+  pointer-events: auto;
+  animation: toast-in 260ms ease-out both;
+}
+
+.toast.success {
+  border-left-color: var(--green-700);
+}
+
+.toast.info {
+  color: #735516;
+  border-color: #eddaa0;
+  border-left-color: var(--yellow);
+}
+
+.toast.error {
+  color: #8d2935;
+  border-color: #f0c2c7;
+  border-left-color: var(--red);
+}
+
+.toast-icon {
+  display: grid;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+  place-items: center;
+  color: #fff;
+  background: var(--green-700);
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: 900;
+}
+
+.toast.info .toast-icon {
+  background: var(--yellow);
+  color: #60470f;
+}
+
+.toast.error .toast-icon {
+  background: var(--red);
+}
+
+.toast.removing {
+  animation: toast-out 220ms ease-in forwards;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateX(24px) translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0) translateY(0);
+  }
+}
+
+@keyframes toast-out {
+  to {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+}
+
+@media (max-width: 759px) {
+  .toast-container {
+    top: 12px;
+    right: 10px;
+    left: 10px;
+    width: auto;
+  }
+}
+
     </style>
   </head>
 
   <body>
 
+    <div id="toastContainer" class="toast-container"></div>
 
     <div id="loadingOverlay" class="loading-overlay" aria-hidden="true">
       <div class="loading-box">
@@ -571,24 +762,34 @@ input[readonly] {
 
     <main class="container">
       <section class="card header">
-        <img
-          class="logo"
-          src="assets/logo.png"
-          alt="Logo PC PERSIS Pangalengan"
-          onerror="showLogoFallback()"
-        >
+  <div class="logo-pair">
+    <img
+      class="logo logo-persis"
+      src="assets/logo.png"
+      alt="Logo PERSIS"
+      onerror="showLogoFallback()"
+    >
 
-        <div id="logoFallback" class="logo-fallback">
-          PC PERSIS<br>
-          PANGALENGAN
-        </div>
+    <span class="logo-divider"></span>
 
-        <h1 class="title">Daftar Hadir</h1>
+    <img
+      class="logo logo-musycab"
+      src="assets/logo-musycab.png"
+      alt="Logo Muscab PC PERSIS Pangalengan"
+    >
+  </div>
 
-        <p class="subtitle">
-          Muscab PC PERSIS Pangalengan
-        </p>
-      </section>
+  <div id="logoFallback" class="logo-fallback">
+    PC PERSIS<br>
+    PANGALENGAN
+  </div>
+
+  <h1 class="title">Daftar Hadir</h1>
+
+  <p class="subtitle">
+    Muscab PC PERSIS Pangalengan
+  </p>
+</section>
 
       <section class="content-grid">
         <div class="card panel">
@@ -642,18 +843,18 @@ input[readonly] {
             Data Kehadiran
           </h2>
 
-          <div class="field">
-            <label for="guest_id">
-              Guest ID
-            </label>
+          <div class="field visually-hidden">
+  <label for="guest_id">
+    Guest ID
+  </label>
 
-            <input
-              id="guest_id"
-              type="text"
-              placeholder="Terisi otomatis dari QR"
-              readonly
-            >
-          </div>
+  <input
+    id="guest_id"
+    type="text"
+    placeholder="Terisi otomatis dari QR"
+    readonly
+  >
+</div>
 
           <div class="field">
             <label for="nama">
@@ -727,12 +928,40 @@ input[readonly] {
         return document.getElementById(id);
       }
 
-      function setStatus(message, type) {
-        const element = getElement('status');
+      function setStatus(message, type = 'success') {
+  const container = getElement('toastContainer');
 
-        element.textContent = message;
-        element.className = 'status ' + (type || 'success');
-      }
+  if (!container) {
+    return;
+  }
+
+  const toast = document.createElement('div');
+  const icon = document.createElement('span');
+  const text = document.createElement('span');
+
+  toast.className = `toast ${type}`;
+  icon.className = 'toast-icon';
+  text.textContent = message;
+
+  icon.textContent =
+    type === 'error'
+      ? '!'
+      : type === 'info'
+        ? 'i'
+        : '✓';
+
+  toast.appendChild(icon);
+  toast.appendChild(text);
+  container.appendChild(toast);
+
+  window.setTimeout(() => {
+    toast.classList.add('removing');
+
+    window.setTimeout(() => {
+      toast.remove();
+    }, 220);
+  }, type === 'info' ? 3500 : 5000);
+}
 
       let loadingCount = 0;
 
